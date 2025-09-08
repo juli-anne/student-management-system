@@ -1,4 +1,4 @@
-create table if not exists studentDto
+create table if not exists student
 (
     id serial primary key,
     first_name text not null,
