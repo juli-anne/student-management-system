@@ -721,7 +721,7 @@ export function NxWelcome({ title }: { title: string }) {
                 <p>Your Nx Cloud remote cache setup is almost complete.</p>
 
                 <a
-                  href="https://cloud.nx.app/connect/66h2GBi6FI"
+                  href="https://cloud.nx.app/connect/KNILTeygbu"
                   target="_blank"
                   rel="noreferrer"
                 >
