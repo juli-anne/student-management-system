@@ -3,6 +3,7 @@ package com.julianne.students.controller;
 import com.julianne.students.entity.Student;
 import com.julianne.students.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class StudentController {
 
     @Autowired
     StudentRepository studentRepository;
-    // get all the students
+    // get all students
     @GetMapping("/students")
     public List<Student> getAllStudents() {
         List<Student> students = studentRepository.findAll();
@@ -24,16 +25,17 @@ public class StudentController {
 
     // get student by id
     @GetMapping("/student/{id}")
-    public List<Student> getStudent(@PathVariable Integer id) {
-        Student student = studentRepository.findById(id).get();
-        return Collections.singletonList(student);
+    public ResponseEntity<Student> getStudent(@PathVariable Integer id) {
+        return studentRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // add new student
     @PostMapping("/student/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createStudent(@RequestBody Student student) {
-        studentRepository.save(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        Student saved = studentRepository.save(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     // update a student
@@ -48,6 +50,17 @@ public class StudentController {
                     student.setProgram(updatedStudent.getProgram());
                     Student saved = studentRepository.save(student);
                     return ResponseEntity.ok(saved);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // delete a student
+    @DeleteMapping("/student/delete/{id}")
+    public ResponseEntity<Void> removeStudent(@PathVariable Integer id) {
+        return studentRepository.findById(id)
+                .map(student -> {
+                    studentRepository.delete(student);
+                    return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
